@@ -1,0 +1,43 @@
+[
+	{
+		"name" : "material",
+		"contents" : [
+			{
+				"name" : "gold",
+				"price" : "2000"
+			},
+			{
+				"name" : "silver",
+				"price" : "1000"
+			}
+		]
+	},
+
+	{
+		"name" : "color",
+		"contents" : [
+			{
+				"name" : "red",
+				"price" : "100"
+			},
+			{
+				"name" : "blue",
+				"price" : "50"
+			}
+		]
+	},
+
+	{
+		"name" : "size",
+		"contents" : [
+			{
+				"name" : "large",
+				"price" : "1000"
+			},
+			{
+				"name" : "small",
+				"price" : "500"
+			}
+		]
+	}
+]
