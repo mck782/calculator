@@ -10,6 +10,9 @@ class App extends Component {
     super(props);
 
     this.state = {
+      loggedIn: false,
+      password: 'hi',
+      isLogInModalOpen: false,
       isAddTabModalOpen: false,
       isAddContentModalOpen: false,
       selectedIndex: -1,
@@ -20,6 +23,30 @@ class App extends Component {
     };
 
     this.changeQuantity = this.changeQuantity.bind(this);
+  }
+
+  openLogInModal = () => {
+    this.setState({
+      isLogInModalOpen: true,
+    })
+  }
+
+  closeLogInModal = () => {
+    this.setState({
+      isLogInModalOpen: false,
+    })
+  }
+
+  logIn = () => {
+    const password = this.refs.password.value
+    if(password !== this.state.password) {
+      alert('Wrong password. Try again.')
+    } else {
+      this.setState({
+        loggedIn: true,
+        isLogInModalOpen: false,
+      })
+    }
   }
 
   openAddTabModal = () => {
@@ -104,11 +131,27 @@ class App extends Component {
     this.setState({totalPrice: total});
   }
 
+  logOut = () => {
+    this.setState({
+      loggedIn: false,
+    })
+  }
+
+  changePassword = () => {
+    this.setState({
+      password: 'hello'
+    })
+  }
+
   render() {
     return (
       <div style={{ padding: 50 }}>
         <p>
-          <button onClick={this.openAddTabModal}>+ Add Tab</button>
+          {!this.state.loggedIn && <button onClick={this.openLogInModal}>Log in</button>} {' '}
+          {this.state.loggedIn && <button onClick={this.logOut}>Log out</button>} {' '}
+          {this.state.loggedIn && <button onClick={this.changePassword}>Change password</button>} {' '}
+          {this.state.loggedIn && <button>Save</button>} {' '}
+          {this.state.loggedIn && <button onClick={this.openAddTabModal}>+ Add Tab</button>}
         </p>
 
         <Tabs
@@ -118,7 +161,7 @@ class App extends Component {
           <TabList>
             {this.state.config.map((tab, i) => (
               <Tab key={i}>
-                {tab['name']} <a href="#" onClick={() => this.removeTab(i)}>✕</a>
+                {tab['name']} {this.state.loggedIn && <a href="#" onClick={() => this.removeTab(i)}>✕</a>}
               </Tab>
             ))}
           </TabList>
@@ -129,10 +172,10 @@ class App extends Component {
                   <input type="radio" name={tab['name']} onClick={() => this.selectContent(i, content)}></input>
                   <label>
                     {' '}{content['name']}{' '} 
-                    <a href="#" onClick={() => this.removeContent(j)}>✕</a>
+                    {this.state.loggedIn && <a href="#" onClick={() => this.removeContent(j)}>✕</a>}
                   </label>
                 </p>)}
-                <p><button onClick={this.openAddContentModal}>+ Add Content</button></p>
+                {this.state.loggedIn && <p><button onClick={this.openAddContentModal}>+ Add Content</button></p>}
             </TabPanel>)}
         </Tabs> 
 
@@ -150,6 +193,19 @@ class App extends Component {
         </p>
 
         <Modal
+          isOpen={this.state.isLogInModalOpen}
+          onRequestClose={this.closeLogInModal}
+          style={{ width: 400, height: 350, margin: '0 auto' }}
+          contentLabel="logIn"
+        >
+          <h2>Enter password</h2>
+          <label htmlFor="password">Password:</label><br />
+          <input id="password" type="text" ref="password" /><br /><br />
+          <button onClick={this.logIn}>Log in</button> {' '}
+          <button onClick={this.closeLogInModal}>Cancel</button>
+        </Modal>
+
+        <Modal
           isOpen={this.state.isAddTabModalOpen}
           onRequestClose={this.closeAddTabModal}
           style={{ width: 400, height: 350, margin: '0 auto' }}
@@ -158,7 +214,7 @@ class App extends Component {
           <h2>Add a Tab</h2>
           <label htmlFor="label">Label:</label><br />
           <input id="label" type="text" ref="label" /><br /><br />
-          <button onClick={this.addTab}>OK</button>{' '}
+          <button onClick={this.addTab}>OK</button> {' '}
           <button onClick={this.closeAddTabModal}>Cancel</button>
         </Modal> 
 
