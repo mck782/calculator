@@ -7,12 +7,13 @@ var jsonData = require('./config/config.json')
 
 class App extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       loggedIn: false,
-      password: 'hi',
       isLogInModalOpen: false,
+      password: 'hi',
+      isChangePasswordModalOpen: false,
       isAddTabModalOpen: false,
       isAddContentModalOpen: false,
       selectedIndex: -1,
@@ -20,9 +21,9 @@ class App extends Component {
       prices: Array(jsonData.length).fill(0),
       quantity: 0,
       totalPrice: 0,
-    };
+    }
 
-    this.changeQuantity = this.changeQuantity.bind(this);
+    this.changeQuantity = this.changeQuantity.bind(this)
   }
 
   openLogInModal = () => {
@@ -49,16 +50,36 @@ class App extends Component {
     }
   }
 
+  openChangePasswordModal = () => {
+    this.setState({
+      isChangePasswordModalOpen: true,
+    })
+  }
+
+  closeChangePasswordModal = () => {
+    this.setState({
+      isChangePasswordModalOpen: false,
+    })
+  }
+
+  changePassword = () => {
+    const newPassword = this.refs.password.value
+    this.setState({
+      password: newPassword
+    })
+    this.closeChangePasswordModal()
+  }
+
   openAddTabModal = () => {
     this.setState({
       isAddTabModalOpen: true,
-    });
+    })
   }
 
   closeAddTabModal = () => {
     this.setState({
       isAddTabModalOpen: false,
-    });
+    })
   } 
 
   addTab = () => {
@@ -69,7 +90,7 @@ class App extends Component {
         { 'name' : label, 'contents' : [] },
       ],
       selectedIndex: this.state.config.length,
-    });
+    })
     this.closeAddTabModal()
   } 
 
@@ -77,20 +98,20 @@ class App extends Component {
     this.setState({
       config: this.state.config.filter((tab, i) => i !== index),
       selectedIndex: Math.max(this.state.selectedIndex - 1, 0),
-    });
+    })
   } 
 
   openAddContentModal = () => {
     this.setState({
       isAddContentModalOpen: true,
-    });
+    })
   }
 
   closeAddContentModal = () => {
     this.setState({
       isAddContentModalOpen: false,
-    });
-  } 
+    })
+  }
 
   addContent = () => {
     const name = this.refs.name.value
@@ -100,7 +121,7 @@ class App extends Component {
     this.setState({
       config: newConfig,
     })
-    this.closeAddContentModal();
+    this.closeAddContentModal()
   } 
 
   removeContent = (index) => {
@@ -108,7 +129,7 @@ class App extends Component {
     newConfig[this.state.selectedIndex]['contents'].splice(index, 1)
     this.setState({
       config: newConfig,
-    });
+    })
   }
 
   selectContent = (index, content) => {
@@ -119,7 +140,7 @@ class App extends Component {
     newPrices[index] = content['price']
     this.setState({
       prices: newPrices,
-    });
+    })
   }
 
   changeQuantity(event) {
@@ -127,6 +148,13 @@ class App extends Component {
   }
 
   calculateTotal = () => {
+    for(var i = 0; i < this.state.prices.length; ++i) {
+      console.log(this.state.prices[i])
+      if(this.state.prices[i] === 0) {
+        alert('Please select all fields.')
+        return
+      }
+    }
     let total = this.state.prices.reduce((i, j) => i + j, 0) * this.state.quantity
     this.setState({totalPrice: total});
   }
@@ -137,19 +165,13 @@ class App extends Component {
     })
   }
 
-  changePassword = () => {
-    this.setState({
-      password: 'hello'
-    })
-  }
-
   render() {
     return (
       <div style={{ padding: 50 }}>
         <p>
           {!this.state.loggedIn && <button onClick={this.openLogInModal}>Log in</button>} {' '}
           {this.state.loggedIn && <button onClick={this.logOut}>Log out</button>} {' '}
-          {this.state.loggedIn && <button onClick={this.changePassword}>Change password</button>} {' '}
+          {this.state.loggedIn && <button onClick={this.openChangePasswordModal}>Change password</button>} {' '}
           {this.state.loggedIn && <button>Save</button>} {' '}
           {this.state.loggedIn && <button onClick={this.openAddTabModal}>+ Add Tab</button>}
         </p>
@@ -203,6 +225,19 @@ class App extends Component {
           <input id="password" type="text" ref="password" /><br /><br />
           <button onClick={this.logIn}>Log in</button> {' '}
           <button onClick={this.closeLogInModal}>Cancel</button>
+        </Modal>
+
+        <Modal
+          isOpen={this.state.isChangePasswordModalOpen}
+          onRequestClose={this.closeChangePasswordModal}
+          style={{ width: 400, height: 350, margin: '0 auto' }}
+          contentLabel="changePassword"
+        >
+          <h2>Change password</h2>
+          <label htmlFor="password">New password:</label><br />
+          <input id="password" type="text" ref="password" /><br /><br />
+          <button onClick={this.changePassword}>Change</button> {' '}
+          <button onClick={this.closeChangePasswordModal}>Cancel</button>
         </Modal>
 
         <Modal
