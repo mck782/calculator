@@ -4,6 +4,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 var jsonData = require('./config/config.json')
+var pw = require('./config/password.json')
 
 class App extends Component {
   constructor(props) {
@@ -12,7 +13,7 @@ class App extends Component {
     this.state = {
       loggedIn: false,
       isLogInModalOpen: false,
-      password: 'hi',
+      password: pw[0],
       isChangePasswordModalOpen: false,
       isAddTabModalOpen: false,
       isAddContentModalOpen: false,
